@@ -1,0 +1,9 @@
+
+/* Soccer animation behind the hero (a video in videos/hero.mp4 plays on top if you add one) */
+.hero{position:relative;overflow:hidden}
+.hero .wrap{position:relative;z-index:1}
+.hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.hero-bg svg,.hero-video{position:absolute;inset:0;width:100%;height:100%}
+.hero-video{object-fit:cover;opacity:.4}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,.1))}
+@media(prefers-reduced-motion:reduce){.hero-video{display:none}}

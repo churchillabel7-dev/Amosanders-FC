@@ -1,0 +1,11 @@
+
+/* Lively headline: "One club. Every continent." */
+.hero h1 .l1,.hero h1 .l2{display:inline-block}
+.hero h1 .l1{color:var(--on-navy);animation:fromLeft .9s cubic-bezier(.2,.8,.2,1) backwards}
+.hero h1 .l2{background:linear-gradient(90deg,#b5f0a8 0,#fff 50%,#b5f0a8 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fromRight .9s .35s cubic-bezier(.2,.8,.2,1) backwards,shine 4s 1.2s linear infinite}
+.hero h1::after{content:"";display:block;height:6px;width:0;background:var(--gold);margin-top:18px;animation:grow 1s 1s forwards}
+@keyframes fromLeft{from{opacity:0;transform:translateX(-60px);letter-spacing:.12em}}
+@keyframes fromRight{from{opacity:0;transform:translateX(60px);letter-spacing:.12em}}
+@keyframes shine{to{background-position:-200% 0}}
+@keyframes grow{to{width:120px}}
+@media(prefers-reduced-motion:reduce){.hero h1 .l1,.hero h1 .l2{animation:none}.hero h1::after{animation:none;width:120px}}
