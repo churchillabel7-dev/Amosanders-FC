@@ -161,7 +161,7 @@ h2::after{content:"";display:block;width:56px;height:5px;background:var(--gold);
 .hero p{animation:rise .8s .3s backwards}
 .next{animation:rise .8s .5s backwards}
 .hero .btn{animation:pulse 2s infinite}
-.ticker{background:var(--gold);color:#fff;overflow:hidden;white-space:nowrap;font:700 18px "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.ticker{background:#f2b705;color:#111;overflow:hidden;white-space:nowrap;font:700 18px "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.04em}
 .ticker div{display:inline-block;padding:7px 0;animation:marq 34s linear infinite}
 .ticker:hover div{animation-play-state:paused}
 .ticker span{margin:0 26px}.ticker span::before{content:"\26BD";margin-right:12px;opacity:.8}
@@ -475,7 +475,7 @@ footer::after{content:"AMOSANDERS FC  " var(--crest-img) "  " "AMOSANDERS FC  " 
 .open .menu-btn span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .open .menu-btn span:nth-child(2){opacity:0}
 .open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-@media(max-width:1020px){
+@media(max-width:1240px){
   .menu-btn{display:inline-flex}
   nav .lang{margin-left:auto}
   nav ul{display:none;order:5;flex:0 0 100%;flex-direction:column;gap:0;font-size:18px;border-top:1px solid rgba(255,255,255,.18);margin-top:4px}
@@ -561,3 +561,36 @@ footer::after{content:"AMOSANDERS FC  " var(--crest-img) "  " "AMOSANDERS FC  " 
 .squad.photos{grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));justify-content:stretch;gap:24px}
 .squad.photos .g{cursor:zoom-in;aspect-ratio:4/3;min-height:340px;width:100%}
 .squad.photos .g:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* Women's team and Academy: same wide container as the Gallery, so the photos fall into the same rows and columns */
+#squad .wrap:has(.squad.photos){max-width:1400px}
+
+/* News / Beyond the Pitch: single photos open in the viewer too */
+.ndet-img,.ndet-more img{cursor:zoom-in;transition:filter .25s}
+.ndet-img:hover,.ndet-more img:hover,.ndet-img:focus-visible,.ndet-more img:focus-visible{filter:brightness(1.1)}
+.ndet-img:focus-visible,.ndet-more img:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+
+/* Keep the menu on one line now that it has a Home link */
+@media(min-width:1241px){nav{max-width:1240px;gap:16px}nav ul{gap:18px}}
+
+/* Videos page: playable videos fill the card without cropping, no fake play icon over them, cards no longer stretch to equal height */
+.vids{align-items:start}
+.v .th video{display:block;width:100%;height:100%;object-fit:contain!important;background:#000}
+.v .th:has(video)::after{display:none}
+.v:hover .th:has(video){filter:none}
+
+/* WhatsApp: footer button, form buttons and floating button */
+.ft-btn.wa{background:#25d366;border-color:#25d366;color:#06240f}
+.ft-btn.wa:hover{background:#3ee57d}
+.reg-btns{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.reg-btns .btn{margin:0}
+.wa-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:54px;height:54px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .2s}
+.wa-fab:hover,.wa-fab:focus-visible{transform:scale(1.1)}
+.wa-fab svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.wa-fab:focus-visible{outline:3px solid #fff;outline-offset:2px}
+
+/* Phone fixes: stop the starting-lineup panel and photo grids from pushing the page sideways */
+@media(max-width:820px){.lu-body{grid-template-columns:minmax(0,1fr)}}
+.gal>.g,.squad.photos>.g{min-width:0;max-width:100%}
+.gal .g img,.squad.photos .g img{max-width:100%}
+@media(max-width:400px){.lu-subs{grid-template-columns:minmax(0,1fr)}}

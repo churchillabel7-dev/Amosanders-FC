@@ -144,7 +144,7 @@ const SW={"Matches":"Mechi","News":"Habari","Squad":"Kikosi","Management":"Uongo
 const orig=new WeakMap();let lang="en",cat="all";
 function setLang(l){lang=l;try{localStorage.setItem("lang",l)}catch(e){}const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.parentNode.tagName==="SCRIPT")continue;if(!orig.has(n))orig.set(n,n.nodeValue);const o=orig.get(n),k=o.trim();n.nodeValue=(l==="sw"&&SW[k])?o.replace(k,SW[k]):o}document.documentElement.lang=l;document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l))}
 const grid=document.getElementById("gal"),dlg=document.getElementById("lb");
-function draw(){grid.innerHTML="";items.filter(i=>i&&(cat==="all"||i[2]===cat)).forEach(i=>{const b=document.createElement("button");b.type="button";b.className="g";const im=new Image();im.alt=i[1];
+function draw(){grid.innerHTML="";items.filter(i=>i&&(cat==="all"||i[2]===cat)).forEach(i=>{const b=document.createElement("button");b.type="button";b.className="g";const im=new Image();im.alt=i[1];im.loading="lazy";im.decoding="async";
 im.onload=()=>{b.onclick=()=>{dlg.querySelector("img").src=im.src;dlg.querySelector("img").alt=i[1];dlg.querySelector("p").textContent=i[1];dlg.showModal()}};
 im.onerror=()=>{im.remove();b.classList.add("empty");b.disabled=true;b.insertAdjacentHTML("afterbegin","<em>Add photo</em>");setLang(lang)};
 im.src=/^\/?images\//.test(i[0])?i[0].replace(/^\//,""):"images/gallery/"+i[0];b.append(im);const c=document.createElement("span");c.textContent=i[1];b.append(c);grid.append(b)})}
@@ -153,6 +153,7 @@ document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dat
 document.getElementById("close").onclick=()=>dlg.close();
 dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
 Object.assign(SW,{"Beyond the Pitch":"Zaidi ya Uwanja","Quick links":"Viungo vya haraka","Contact us":"Wasiliana nasi","Always open":"Wazi saa zote","Call us":"Tupigie","Get directions":"Pata maelekezo","Your number one HOME.":"Nyumbani kwako nambari moja.","All rights reserved.":"Haki zote zimehifadhiwa."});
+Object.assign(SW,{"Amosanders FC on Facebook":"Amosanders FC kwenye Facebook","Send via WhatsApp":"Tuma kupitia WhatsApp"});
 document.querySelectorAll(".yr").forEach(e=>e.textContent=new Date().getFullYear());
 draw();
 try{if(localStorage.getItem("lang")==="sw")setLang("sw")}catch(e){}
@@ -174,3 +175,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")set(false)});
 document.addEventListener("click",e=>{if(!nav.contains(e.target))set(false)});
 matchMedia("(min-width:1021px)").addEventListener("change",e=>{if(e.matches)set(false)});
 })();
+
+/* Floating WhatsApp button */
+(function(){const a=document.createElement("a");a.className="wa-fab";a.href="https://wa.me/254720349467";a.target="_blank";a.rel="noopener";a.setAttribute("aria-label","Chat with Amosanders FC on WhatsApp");
+a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"/></svg>';document.body.append(a)})();

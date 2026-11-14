@@ -107,16 +107,18 @@ function unbg(im){try{
   x.putImageData(d,0,0);im.src=cv.toDataURL("image/png");
 }catch(e){}}
 const box=document.getElementById("players");
-const squads={men:players,women:W,academy:A};let cur="all";
+const squads={men:players,women:W,academy:A};
+/* Detailed positions (RB, CM, LW...) belong to a group for the filter buttons and the lineup: GK / DF / MF / FW */
+const grp=c=>({GK:"GK",CB:"DF",RB:"DF",LB:"DF",RWB:"DF",LWB:"DF",DF:"DF",DM:"MF",CM:"MF",AM:"MF",LM:"MF",RM:"MF",MF:"MF",LW:"FW",RW:"FW",CF:"FW",ST:"FW",SS:"FW",FW:"FW"})[c]||c;let cur="all";
 const sil='<svg viewBox="0 0 100 125" aria-hidden="true"><circle cx="50" cy="42" r="20"/><path d="M12 125c0-30 16-46 38-46s38 16 38 46z"/></svg>';
-const pic=(n,src)=>src?`<img src="${src}" alt="${n}">`:sil;
+const pic=(n,src)=>src?`<img src="${src}" alt="${n}" loading="lazy" decoding="async">`:sil;
 let team="men";
 function draw(f){if(!box)return;const photoOnly=team!=="men";
 box.className=photoOnly?"squad photos":"squad";
 if(photoOnly){
-  box.innerHTML=players.map(p=>typeof p[0]==="string"?p[0]:p[5]).filter(Boolean).map((s,i)=>`<button type="button" class="g" aria-label="Open photo ${i+1}"><img src="${s}" alt="Amosanders FC"></button>`).join("");
+  box.innerHTML=players.map(p=>typeof p[0]==="string"?p[0]:p[5]).filter(Boolean).map((s,i)=>`<button type="button" class="g" aria-label="Open photo ${i+1}"><img src="${s}" alt="Amosanders FC" loading="lazy" decoding="async"></button>`).join("");
   box.querySelectorAll("img").forEach(im=>im.onerror=()=>im.closest("button").remove());return}
-box.innerHTML=players.filter(p=>f==="all"||p[4]===f).map(p=>`<div class="p"><div class="ph">${pic(p[1],p[5])}<b>${p[0]}</b><em>${p[4]}</em></div><div class="t"><h3>${p[1]}</h3><span>${p[2]} · ${p[3]}</span></div></div>`).join("")}
+box.innerHTML=players.filter(p=>f==="all"||grp(p[4])===f).map(p=>`<div class="p"><div class="ph">${pic(p[1],p[5])}<b>${p[0]}</b><em>${p[4]}</em></div><div class="t"><h3>${p[1]}</h3><span>${p[2]} · ${p[3]}</span></div></div>`).join("")}
 /* Women's team and Academy: click a photo to open it large; arrows / buttons move between photos */
 (function(){if(!box)return;
 const dlg=document.createElement("dialog");dlg.className="ndet-lb";dlg.setAttribute("aria-label","Photo viewer");
@@ -181,7 +183,11 @@ Put your pictures in images/slides, name them anything and list the names below
 const box=document.getElementById("slides");if(!box)return;
 const names=["slide-1","slide-2","slide-3","slide-4","slide-5","slide-6","slide-7","slide-8","slide-9","slide-10","slide-11","slide-12","slide-13","slide-14","slide-15","slide-16","slide-17","slide-18","slide-19","slide-20","slide-21","slide-22","slide-23","slide-24","slide-25","slide-26","slide-27","slide-28","slide-29"," slide-30","slide-31","slide-32","slide-33","slide-34","slide-35","slide-36","slide-37","slide-38","slide-39"," slide-40"," slide-41"," slide-42"," slide-43"];
 const exts=["",".jpg",".jpeg",".png",".webp",".avif",".gif",".JPG",".JPEG",".PNG",".WEBP"];
-const jobs=[...[...new Set(names.map(n=>n.trim()).filter(Boolean))].map(n=>["images/slides/"+n,/\.\w{3,4}$/.test(n)?[""]:exts])];
+/* On phones / Data Saver only a random handful of slides is loaded, so the page opens quickly and uses little data */
+const small=matchMedia("(max-width:700px)").matches||(navigator.connection&&navigator.connection.saveData);
+let pool=[...new Set(names.map(n=>n.trim()).filter(Boolean))];
+if(small){for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}pool=pool.slice(0,10)}
+const jobs=[...pool.map(n=>["images/slides/"+n,/\.\w{3,4}$/.test(n)?[""]:exts])];
 const found=[],failed=[];let pending=jobs.length;
 function tryLoad(i,base,list){
 if(!list.length){failed.push(base);return finish()}
@@ -199,7 +205,7 @@ const track=document.createElement("div");track.className="track";
 track.style.setProperty("--dur",half.length*5+"s");
 [...half,...half].forEach(src=>{               /* two identical halves = seamless loop */
 const t=document.createElement("div");t.className="tile";
-const im=new Image();im.src=src;im.alt="";t.append(im);track.append(t)});
+const im=new Image();im.decoding="async";im.src=src;im.alt="";t.append(im);track.append(t)});
 box.append(track);
 if(matchMedia("(prefers-reduced-motion:reduce)").matches)track.style.animation="none"}
 jobs.forEach(([base,list],i)=>tryLoad(i,base,list));
@@ -269,7 +275,9 @@ function openDet(i){const d=data[i];det.textContent="";
   const x=el("button","ndet-x","\u00d7");x.type="button";x.setAttribute("aria-label","Close story");x.onclick=()=>{det.hidden=true};
   const body=el("div","ndet-body");body.append(el("small",null,d.tag),el("h3",null,d.title));
   (d.paras.length?d.paras:[d.text]).forEach(t=>body.append(el("p",null,t)));
-  if(d.more.length&&d.more.length<2){const m=el("div","ndet-more");d.more.forEach(u=>{const g=new Image();g.alt=d.title;g.loading="lazy";g.onerror=()=>g.remove();g.src=u;m.append(g)});body.append(m)}
+  const one=[d.img,...d.more].filter(Boolean).map(u=>u.split("#")[0]);
+  const openable=(im,k)=>{im.tabIndex=0;im.setAttribute("role","button");im.setAttribute("aria-label","Open photo "+(k+1)+" of "+one.length);im.onclick=()=>openLB(one,k,d.title);im.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openLB(one,k,d.title)}}};
+  if(d.more.length&&d.more.length<2){const m=el("div","ndet-more");d.more.forEach((u,j)=>{const g=new Image();g.alt=d.title;g.loading="lazy";g.onerror=()=>g.remove();g.src=u;openable(g,j+1);m.append(g)});body.append(m)}
   if(d.more.length>=2){/* many photos: they fill the left side as a collage.
        Tile hints after the file name:  #h big (4x2)  #q square (2x2)  #w wide (2x1)  #t tall (1x2)  none = small square */
     const g=el("div","ndet-gal"),all=[d.img,...d.more].filter(Boolean).map(u=>{const[p,hn]=u.split("#");return{src:p,hint:hn||""}});
@@ -296,7 +304,7 @@ function openDet(i){const d=data[i];det.textContent="";
         g.style.gridTemplateRows="repeat("+(base+extra)+","+u.toFixed(1)+"px)"};
       new ResizeObserver(fit).observe(g);fit()}
     det.append(g)}
-  else if(d.img){const im=new Image();im.alt=d.title;im.className="ndet-img";im.onerror=()=>im.remove();im.src=d.img;det.append(im)}
+  else if(d.img){const im=new Image();im.alt=d.title;im.loading="lazy";im.decoding="async";im.className="ndet-img";im.onerror=()=>im.remove();im.src=d.img;openable(im,0);det.append(im)}
   det.append(body,x);det.hidden=false;
   det.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})}
 th.forEach((t,i)=>t.addEventListener("click",()=>{go(i);openDet(i)}));
@@ -313,10 +321,10 @@ const root=document.getElementById("lu-cards"),pitch=document.getElementById("pi
 Object.assign(SW,{"Starting lineup":"Kikosi cha kuanza","Our matchday formation, from goalkeeper to strikers.":"Mfumo wetu wa mechi, kuanzia golikipa hadi washambuliaji.","Formation":"Mfumo","Substitutes":"Wachezaji wa akiba","Head coach":"Kocha mkuu"});
 const codes=["GK","DF","MF","FW"],ypos=[85,63,40,16];
 const steps=[...document.querySelectorAll("#lineup .lu-steps li")];
-const lines=codes.map(c=>squads.men.filter(p=>p[4]===c));
+const lines=codes.map(c=>squads.men.filter(p=>grp(p[4])===c));
 const el=(c,t)=>{const e=document.createElement(t||"div");e.className=c;return e};
 /* Substitutes: [shirt number, name, position]. Replace these placeholders with your real bench. */
-const subs=[[12,"Substitute 1","GK"],[13,"Substitute 2","DF"],[14,"Substitute 3","MF"],[15,"Substitute 4","MF"],[16,"Substitute 5","FW"]];
+const subs=[[24,"Okello","GK"],[13,"Erick","LB"],[7,"Benjamin","RW"],[4,"Maxi","CB"],[16,"Elvo","LB"]];
 const subEls=subs.map(([no,name,pos])=>{const li=document.createElement("li"),b=document.createElement("b"),sp=document.createElement("span"),em=document.createElement("em");
   b.textContent=no;sp.textContent=name;em.textContent=pos;li.append(b,sp,em);document.getElementById("lu-subs").append(li);return li});
 /* Head coach: first person in the staff list near the top of this file */
@@ -409,6 +417,7 @@ else sec.classList.add("sp-on");
 })();
 
 Object.assign(SW,{"Beyond the Pitch":"Zaidi ya Uwanja","Quick links":"Viungo vya haraka","Contact us":"Wasiliana nasi","Always open":"Wazi saa zote","Call us":"Tupigie","Get directions":"Pata maelekezo","Your number one HOME.":"Nyumbani kwako nambari moja.","All rights reserved.":"Haki zote zimehifadhiwa."});
+Object.assign(SW,{"Amosanders FC on Facebook":"Amosanders FC kwenye Facebook","Send via WhatsApp":"Tuma kupitia WhatsApp"});
 document.querySelectorAll(".yr").forEach(e=>e.textContent=new Date().getFullYear());
 
 /* Keep the chosen language when moving between pages */
@@ -425,5 +434,9 @@ b.addEventListener("click",()=>set(!nav.classList.contains("open")));
 ul.addEventListener("click",e=>{if(e.target.closest("a"))set(false)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")set(false)});
 document.addEventListener("click",e=>{if(!nav.contains(e.target))set(false)});
-matchMedia("(min-width:1021px)").addEventListener("change",e=>{if(e.matches)set(false)});
+matchMedia("(min-width:1241px)").addEventListener("change",e=>{if(e.matches)set(false)});
 })();
+
+/* Floating WhatsApp button */
+(function(){const a=document.createElement("a");a.className="wa-fab";a.href="https://wa.me/254720349467";a.target="_blank";a.rel="noopener";a.setAttribute("aria-label","Chat with Amosanders FC on WhatsApp");
+a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"/></svg>';document.body.append(a)})();
