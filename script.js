@@ -98,7 +98,7 @@ function unbg(im){try{
   const x=cv.getContext("2d");x.drawImage(im,0,0,cw,ch);
   const d=x.getImageData(0,0,cw,ch),a=d.data;
   const px=(i,j)=>{const o=(j*cw+i)*4;return[a[o],a[o+1],a[o+2]]};
-  const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2]);
+  const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2]);ss
   const cs=[px(2,2),px(cw-3,2),px(2,ch-3),px(cw-3,ch-3)];
   const bg=[0,1,2].map(k=>cs.reduce((t,c)=>t+c[k],0)/4);
   if(cs.some(c=>dist(c,bg)>40))return;            /* background is not a flat colour: leave the photo alone */
