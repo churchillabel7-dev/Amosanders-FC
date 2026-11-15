@@ -88,7 +88,7 @@ const A=[
 ["images/posters/gri.jpg"],
 ["images/posters/gro.jpg"],
 ];
-let players=[[1,"Peter","Goalkeeper","Kenya","GK","images/petro.png"],[4,"Veron","Right-back","Kenya","RB","images/veron.png"],[3,"Isaac","Left-back","Kenya","LB","images/isaac.png"],[8,"Davie","Midfielder","Kenya","DM","images/davie.png"],[10,"Wizkid","Playmaker","Kenya","AM","images/wiz.png"],[12,"Churchill","Midfielder","Kenya","CM","images/ca.jpeg"],[9,"Lelieto","Striker","Kenya","CF","images/leleito.png"],[11,"Ezekiel","Winger","Kenya","LW","images/ezekiel.png"],[5,"Hosea","Defender","Kenya","CB","images/hosea.png"]];
+let players=[[1,"Peter","Goalkeeper","Kenya","GK","images/petro.png"],[4,"Veron","Right-back","Kenya","RB","images/Veron.png"],[3,"Isaac","Left-back","Kenya","LB","images/isaac.png"],[8,"Davie","Midfielder","Kenya","DM","images/davie.png"],[10,"Wizkid","Playmaker","Kenya","AM","images/wiz.png"],[12,"Churchill","Midfielder","Kenya","CM","images/ca.jpeg"],[9,"Lelieto","Striker","Kenya","CF","images/leleito.png"],[11,"Ezekiel","Winger","Kenya","LW","images/ezekiel.png"],[5,"Hosea","Defender","Kenya","CB","images/hosea.png"],[6,"Juma","Midfielder","Kenya","CM","images/juma.png"],[14,"Jonte","Winger","Kenya","RW","images/jonte.png"]];
 /* Photos saved as .jpg/.jpeg have a solid background (e.g. Churchill's green). This removes a flat-colour background
    so every player sits on the same pitch tile. (Best long-term fix: save such photos as transparent .png.) */
 function unbg(im){try{
